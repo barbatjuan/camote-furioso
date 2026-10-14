@@ -116,25 +116,52 @@
     piromano: { name: 'Camote Pirómano', desc: 'Todo arde. Alcance corto.', weapon: 'lanzallamas', fx: { dmg: 5, range: -40 }, skin: '#d4552a', acc: 'none' },
   };
 
-  // from: first wave it spawns in the normal pool; w: pool weight. spd is px/s (Brotato speed × 2/3).
+  // spd is px/s (Brotato speed × 2/3). Which enemies spawn when is set per world in WORLDS.
   const EN = {
-    bebe:        { name: 'Babosín', hp: 3, hpW: 2, spd: 165, spdVar: .2, dmg: 1, dmgW: .6, r: 15, mat: 1, color: '#7ad36b', ai: 'chase', from: 1, w: 10 },
-    perseguidor: { name: 'Corretón', hp: 1, hpW: 1, spd: 250, dmg: 1, dmgW: .6, r: 12, mat: 1, color: '#b6e35a', ai: 'chase', from: 2, w: 3, group: [2, 4] },
-    embestidor:  { name: 'Embestidor', hp: 4, hpW: 2.5, spd: 160, dmg: 1, dmgW: .85, r: 17, mat: 1, color: '#e0a341', ai: 'charge', from: 3, w: 3 },
-    escupidor:   { name: 'Escupidor', hp: 8, hpW: 1, spd: 133, dmg: 1, dmgW: .6, pdmgW: .75, r: 17, mat: 1, color: '#d36bc8', ai: 'spit', from: 4, w: 3, crate: .1 },
-    bombardero:  { name: 'Bombardero', hp: 6, hpW: 2, spd: 170, dmg: 3, dmgW: 1.2, r: 17, mat: 1, color: '#e8445a', ai: 'bomb', from: 6, w: 1.5 },
-    bruto:       { name: 'Bruto', hp: 20, hpW: 11, spd: 200, dmg: 2, dmgW: .85, r: 27, mat: 3, color: '#6b8ed3', ai: 'charge', from: 8, w: 2 },
-    mosca:       { name: 'Mosca', hp: 15, hpW: 4, spd: 233, dmg: 1, dmgW: .6, r: 14, mat: 1, color: '#3fc1c9', ai: 'orbit', from: 8, w: 2 },
-    invocador:   { name: 'Invocador', hp: 20, hpW: 6, spd: 90, dmg: 1, dmgW: .5, r: 20, mat: 2, color: '#8a5cc7', ai: 'summon', from: 10, w: .7 },
-    acelerador:  { name: 'Bólido', hp: 10, hpW: 24, spd: 100, spdMax: 400, dmg: 1, dmgW: 1.2, r: 20, mat: 3, color: '#c0392b', ai: 'pursue', from: 11, w: 1 },
-    sanador:     { name: 'Sanadora', hp: 10, hpW: 8, spd: 200, dmg: 1, dmgW: .5, r: 17, mat: 2, color: '#ff8fc8', ai: 'healer', from: 12, w: .8 },
-    tortuga:     { name: 'Tortuga', hp: 12, hpW: 6, spd: 120, dmg: 1, dmgW: 1, r: 26, mat: 1, color: '#6f8a5a', ai: 'chase', tough: .5, from: 13, w: 2 },
-    potenciador: { name: 'Tamborilero', hp: 20, hpW: 3, spd: 100, dmg: 1, dmgW: .5, r: 18, mat: 2, color: '#ff9b3d', ai: 'buffer', from: 16, w: .6 },
+    bebe:        { name: 'Babosín', hp: 3, hpW: 2, spd: 165, spdVar: .2, dmg: 1, dmgW: .6, r: 15, mat: 1, color: '#7ad36b', ai: 'chase' },
+    perseguidor: { name: 'Corretón', hp: 1, hpW: 1, spd: 250, dmg: 1, dmgW: .6, r: 12, mat: 1, color: '#b6e35a', ai: 'chase', group: [2, 4] },
+    embestidor:  { name: 'Embestidor', hp: 4, hpW: 2.5, spd: 160, dmg: 1, dmgW: .85, r: 17, mat: 1, color: '#e0a341', ai: 'charge' },
+    escupidor:   { name: 'Escupidor', hp: 8, hpW: 1, spd: 133, dmg: 1, dmgW: .6, pdmgW: .75, r: 17, mat: 1, color: '#d36bc8', ai: 'spit', crate: .1 },
+    bombardero:  { name: 'Bombardero', hp: 6, hpW: 2, spd: 170, dmg: 3, dmgW: 1.2, r: 17, mat: 1, color: '#e8445a', ai: 'bomb' },
+    bruto:       { name: 'Bruto', hp: 20, hpW: 11, spd: 200, dmg: 2, dmgW: .85, r: 27, mat: 3, color: '#6b8ed3', ai: 'charge' },
+    mosca:       { name: 'Mosca', hp: 15, hpW: 4, spd: 233, dmg: 1, dmgW: .6, r: 14, mat: 1, color: '#3fc1c9', ai: 'orbit' },
+    invocador:   { name: 'Invocador', hp: 20, hpW: 6, spd: 90, dmg: 1, dmgW: .5, r: 20, mat: 2, color: '#8a5cc7', ai: 'summon' },
+    acelerador:  { name: 'Bólido', hp: 10, hpW: 24, spd: 100, spdMax: 400, dmg: 1, dmgW: 1.2, r: 20, mat: 3, color: '#c0392b', ai: 'pursue' },
+    sanador:     { name: 'Sanadora', hp: 10, hpW: 8, spd: 200, dmg: 1, dmgW: .5, r: 17, mat: 2, color: '#ff8fc8', ai: 'healer' },
+    tortuga:     { name: 'Tortuga', hp: 12, hpW: 6, spd: 120, dmg: 1, dmgW: 1, r: 26, mat: 1, color: '#6f8a5a', ai: 'chase', tough: .5 },
+    potenciador: { name: 'Tamborilero', hp: 20, hpW: 3, spd: 100, dmg: 1, dmgW: .5, r: 18, mat: 2, color: '#ff9b3d', ai: 'buffer' },
+    // Desert
+    escarabajo:  { name: 'Escarabajo', hp: 3, hpW: 2, spd: 165, spdVar: .2, dmg: 1, dmgW: .6, r: 15, mat: 1, color: '#d9b44a', ai: 'chase' },
+    escorpion:   { name: 'Escorpión', hp: 9, hpW: 1.5, spd: 140, dmg: 1, dmgW: .6, pdmgW: .6, r: 18, mat: 1, color: '#d98a3a', ai: 'spit', spread: 3, fire: [3.2, 4], crate: .08 },
+    buitre:      { name: 'Buitre', hp: 12, hpW: 4, spd: 230, dmg: 1, dmgW: .75, r: 16, mat: 1, color: '#9a7fa0', ai: 'orbit', dive: true },
+    // Glacier
+    copito:      { name: 'Copito', hp: 3, hpW: 2, spd: 175, spdVar: .2, dmg: 1, dmgW: .6, r: 15, mat: 1, color: '#a8e4f5', ai: 'chase' },
+    pinguino:    { name: 'Pingüino', hp: 5, hpW: 2.5, spd: 150, dmg: 1, dmgW: .9, r: 18, mat: 1, color: '#3d5a80', ai: 'charge', dashMul: 4.4, dashT: .6 },
+    muneco:      { name: 'Muñeco Malvado', hp: 10, hpW: 2, spd: 110, dmg: 1, dmgW: .6, pdmgW: .7, r: 20, mat: 2, color: '#e8f4ff', ai: 'spit', spread: 5, fire: [3.6, 4.4], pspd: 210 },
+    // Volcano
+    brasa:       { name: 'Brasita', hp: 3, hpW: 2, spd: 185, spdVar: .2, dmg: 1, dmgW: .65, r: 14, mat: 1, color: '#ff7a2f', ai: 'chase' },
+    diablillo:   { name: 'Diablillo', hp: 6, hpW: 2, spd: 205, dmg: 3, dmgW: 1.2, r: 16, mat: 1, color: '#e8445a', ai: 'bomb' },
+    golem:       { name: 'Gólem de Lava', hp: 25, hpW: 10, spd: 120, dmg: 2, dmgW: 1, r: 28, mat: 3, color: '#8a4a30', ai: 'chase', tough: .6, heavy: true },
     saqueador:   { name: 'Ratero', hp: 5, hpW: 30, spd: 240, dmg: 1, dmgW: .85, r: 16, mat: 8, color: '#f1d54a', ai: 'flee', special: true },
     arbol:       { name: 'Árbol frutal', hp: 10, hpW: 5, spd: 0, dmg: 0, r: 24, mat: 3, color: '#3fb3a0', ai: 'tree', special: true, neutral: true },
-    elite:       { name: 'Gran Babosa', hp: 750, hpW: 75, spd: 100, dmg: 8, dmgW: .9, r: 44, mat: 30, color: '#e8445a', ai: 'boss', boss: true, special: true },
+    elite:       { name: 'Gran Babosa', hp: 750, hpW: 75, spd: 100, dmg: 8, dmgW: .9, r: 44, mat: 30, color: '#e8445a', ai: 'boss', boss: true, elite: true, special: true },
+    yeti:        { name: 'Yeti Furioso', hp: 750, hpW: 75, spd: 105, dmg: 8, dmgW: .9, r: 46, mat: 30, color: '#7fa7c9', ai: 'boss', boss: true, elite: true, special: true },
+    dragon:      { name: 'Dragoncito', hp: 750, hpW: 75, spd: 100, dmg: 8, dmgW: .9, r: 48, mat: 30, color: '#ff5a2f', ai: 'boss', boss: true, elite: true, special: true },
     jefe:        { name: 'Reina Babosa', hp: 25000, spd: 105, dmg: 30, pdmg: 23, r: 58, mat: 0, color: '#ff7a2f', ai: 'boss', boss: true, special: true },
   };
+  // The run crosses 4 worlds of 5 waves. Each one has its own ground, enemy pool [type, first wave, weight],
+  // filler enemy (mixed into every spawn group and summoned by invokers/bosses) and elite.
+  const WORLDS = [
+    { id: 'huerta', name: 'Huerta Camotera', from: 1, filler: 'bebe', elite: 'elite',
+      pool: [['bebe', 1, 10], ['perseguidor', 2, 3], ['embestidor', 3, 3], ['escupidor', 4, 3], ['bombardero', 5, 1.2]] },
+    { id: 'desierto', name: 'Desierto Tostado', from: 6, filler: 'escarabajo', elite: 'elite',
+      pool: [['escarabajo', 6, 10], ['perseguidor', 6, 2], ['escorpion', 6, 3], ['bombardero', 6, 1], ['buitre', 7, 2.5], ['bruto', 8, 2], ['invocador', 9, .8]] },
+    { id: 'glaciar', name: 'Glaciar Escarchado', from: 11, filler: 'copito', elite: 'yeti',
+      pool: [['copito', 11, 10], ['pinguino', 11, 3], ['muneco', 11, 2.5], ['mosca', 11, 1.5], ['acelerador', 11, 1], ['sanador', 12, .8], ['tortuga', 13, 2]] },
+    { id: 'volcan', name: 'Volcán Ardiente', from: 16, filler: 'brasa', elite: 'dragon',
+      pool: [['brasa', 16, 10], ['diablillo', 16, 2], ['golem', 16, 2.5], ['escorpion', 16, 1.5], ['bruto', 16, 1.5], ['acelerador', 16, 1], ['potenciador', 16, .6], ['invocador', 17, .7]] },
+  ];
+  const worldOf = w => WORLDS.reduce((a, x) => (w >= x.from ? x : a), WORLDS[0]);
   // Level-up values per tier (I..IV), as in Brotato.
   const UPGRADE_VALUES = {
     maxHp: [3, 6, 9, 12], regen: [2, 3, 4, 5], lifesteal: [1, 2, 3, 4], dmg: [5, 8, 12, 16], melee: [2, 4, 6, 8], ranged: [1, 2, 3, 4],
@@ -227,9 +254,12 @@
       p.hp = maxHp(p); p.dead = false; p.iframe = 1; p.ready = false; p.lvOpts = null; p.notice = '';
       p.input.mx = 0; p.input.my = 0;
     });
-    if (W.specials[W.wave] === 'elite') { addMarker(W, 'elite', ...farPoint(W), 1.6); ev(W, { t: 'banner', s: '¡Oleada de élite!' }); }
-    if (W.horde) ev(W, { t: 'banner', s: '¡Oleada de horda!' });
-    if (W.wave === MAX_WAVES) { for (let i = 0; i < dangerOf(W).bosses; i++) addMarker(W, 'jefe', ...farPoint(W), 2); ev(W, { t: 'banner', s: '¡La Reina Babosa!' }); }
+    const world = worldOf(W.wave), msg = [];
+    if (world.from === W.wave) msg.push(`Mundo ${WORLDS.indexOf(world) + 1}: ${world.name}`);
+    if (W.specials[W.wave] === 'elite') { addMarker(W, world.elite, ...farPoint(W), 1.6); msg.push(`¡${EN[world.elite].name}!`); }
+    if (W.horde) msg.push('¡Oleada de horda!');
+    if (W.wave === MAX_WAVES) { for (let i = 0; i < dangerOf(W).bosses; i++) addMarker(W, 'jefe', ...farPoint(W), 2); msg.push('¡La Reina Babosa!'); }
+    if (msg.length) ev(W, { t: 'banner', s: msg.join(' · ') });
   }
   function nearestPlayer(W, x, y, maxD = Infinity) {
     let best = null, bd = maxD * maxD;
@@ -248,19 +278,20 @@
   function spawnGroup(W) {
     const w = W.wave;
     if (hostileCount(W) >= enemyCap(W)) return;
-    const pool = Object.entries(EN).filter(([, d]) => !d.special && d.from <= w).map(([k, d]) => [k, d.w + (k === 'bebe' ? 0 : w * .08)]);
+    const world = worldOf(w);
+    const pool = world.pool.filter(([, from]) => from <= w).map(([k, , wt]) => [k, wt + (k === world.filler ? 0 : (w - world.from) * .15)]);
     const type = weighted(pool);
     const d = EN[type];
     let n = d.group ? randi(d.group[0], d.group[1]) : 1 + Math.floor(W.wave / 3) + (Math.random() < .5 ? 1 : 0);
     n = Math.max(1, Math.round(n * W.spawnScale * (W.horde ? 1.6 : 1)));
     let cx = 0, cy = 0;
     for (let i = 0; i < 20; i++) { cx = rand(60, ARENA.w - 60); cy = rand(60, ARENA.h - 60); if (minPlayerDist(W, cx, cy) > 260) break; }
-    for (let i = 0; i < n; i++) addMarker(W, i === 0 || Math.random() < .65 ? type : 'bebe', cx + rand(-70, 70), cy + rand(-70, 70), rand(.8, 1.1));
+    for (let i = 0; i < n; i++) addMarker(W, i === 0 || Math.random() < .65 ? type : world.filler, cx + rand(-70, 70), cy + rand(-70, 70), rand(.8, 1.1));
   }
   function spawnEnemy(W, type, x, y) {
     const d = EN[type], w = W.wave;
     let hp = (d.hp + (d.hpW || 0) * (w - 1)) * W.hpScale;
-    if (type === 'elite' && w <= 12) hp *= .75;
+    if (d.elite && w <= 12) hp *= .75;
     if (type === 'jefe' && dangerOf(W).bosses > 1) hp *= .75;
     if (d.neutral) hp = d.hp + d.hpW * (w - 1);
     const sp = d.spd * (1 + (d.spdVar ? rand(-d.spdVar, d.spdVar) : rand(-.06, .06)));
@@ -302,7 +333,7 @@
     const crit = Math.random() < cc;
     const dmg = Math.max(1, Math.round(base * (crit ? cm : 1) * e.tough));
     e.hp -= dmg; e.flash = .09;
-    const kr = e.boss ? .08 : e.type === 'bruto' || e.type === 'tortuga' ? .4 : EN[e.type].neutral ? 0 : 1;
+    const kr = e.boss ? .08 : e.type === 'bruto' || e.type === 'tortuga' || EN[e.type].heavy ? .4 : EN[e.type].neutral ? 0 : 1;
     e.kx += dx * knock * 9 * kr; e.ky += dy * knock * 9 * kr;
     txt(W, e.x, e.y - e.r, String(dmg), crit ? '#ffd166' : '#ffffff', crit ? 24 : 17);
     if (owner && !owner.dead && st(owner, 'lifesteal') > 0 && owner.lsCd <= 0 && Math.random() < st(owner, 'lifesteal') / 100) { heal(W, owner, 1); owner.lsCd = .1; }
@@ -316,7 +347,7 @@
     ev(W, { t: 'burst', x: r1(e.x), y: r1(e.y), c: d.color, n: e.boss ? 40 : 10, sp: e.boss ? 400 : 220 });
     const luckM = 1 + (owner ? Math.max(-50, st(owner, 'luck')) : 0) / 100;
     if (e.boss || d.special || Math.random() < dropChance(W)) for (let i = 0; i < e.mat; i++) dropMaterial(W, e.x, e.y, e.boss ? 120 : 0);
-    if (e.type === 'elite') W.drops.push({ type: 'legend', x: e.x, y: e.y, vx: 0, vy: 0, mag: null });
+    if (d.elite) W.drops.push({ type: 'legend', x: e.x, y: e.y, vx: 0, vy: 0, mag: null });
     else if (e.type === 'saqueador') { W.drops.push({ type: 'crate', x: e.x + 12, y: e.y, vx: 0, vy: 0, mag: null }); W.drops.push({ type: 'fruit', x: e.x - 12, y: e.y, vx: 0, vy: 0, mag: null }); }
     else if (e.type === 'arbol') W.drops.push({ type: Math.random() < .2 * luckM ? 'crate' : 'fruit', x: e.x, y: e.y, vx: 0, vy: 0, mag: null });
     else {
@@ -510,19 +541,30 @@
       if (ai === 'chase') { mvx = ux; mvy = uy; }
       else if (ai === 'spit') {
         if (dist > 300) { mvx = ux; mvy = uy; } else if (dist < 220) { mvx = -ux; mvy = -uy; } else { mvx = -uy * .5; mvy = ux * .5; }
-        e.st -= dt; if (e.st <= 0 && dist < 560) { e.st = rand(2, 2.8); shootEnemy(W, e.x, e.y, Math.atan2(dy, dx), 300, e.pdmg); }
+        e.st -= dt;
+        if (e.st <= 0 && dist < 560) {
+          e.st = d.fire ? rand(d.fire[0], d.fire[1]) : rand(2, 2.8);
+          const a0 = Math.atan2(dy, dx), n = d.spread || 1;
+          for (let i = 0; i < n; i++) shootEnemy(W, e.x, e.y, a0 + (i - (n - 1) / 2) * .22, d.pspd || 300, e.pdmg);
+        }
       } else if (ai === 'charge') {
         // walks toward you and dashes every 2.5–3.5 s
         e.cd -= dt;
         if (e.state === 'walk') { mvx = ux; mvy = uy; sp = e.spd * .6; if (dist < 380 && e.cd <= 0) { e.state = 'aim'; e.st = .55; } }
-        else if (e.state === 'aim') { e.st -= dt; e.dx = ux; e.dy = uy; if (e.st <= 0) { e.state = 'dash'; e.st = .45; } }
-        else { mvx = e.dx; mvy = e.dy; sp = e.spd * 3.6; e.st -= dt; if (e.st <= 0) { e.state = 'walk'; e.cd = rand(2.5, 3.5); } }
+        else if (e.state === 'aim') { e.st -= dt; e.dx = ux; e.dy = uy; if (e.st <= 0) { e.state = 'dash'; e.st = d.dashT || .45; } }
+        else { mvx = e.dx; mvy = e.dy; sp = e.spd * (d.dashMul || 3.6); e.st -= dt; if (e.st <= 0) { e.state = 'walk'; e.cd = rand(2.5, 3.5); } }
       } else if (ai === 'orbit') {
         // circles the player, drifting in and out
         const want = 210 + Math.sin(e.t * .8 + e.id) * 50;
         const radial = clamp((dist - want) / 80, -1, 1);
         mvx = ux * radial - uy * e.orbitDir; mvy = uy * radial + ux * e.orbitDir;
         const l = Math.hypot(mvx, mvy) || 1; mvx /= l; mvy /= l;
+        // vultures swoop at the player every 3–4.5 s
+        if (d.dive) {
+          e.cd -= dt;
+          if (e.state === 'dash') { mvx = e.dx; mvy = e.dy; sp = e.spd * 2.4; e.st -= dt; if (e.st <= 0) { e.state = 'walk'; e.cd = rand(3, 4.5); } }
+          else if (e.cd <= 0) { e.state = 'dash'; e.st = .55; e.dx = ux; e.dy = uy; }
+        }
       } else if (ai === 'pursue') {
         mvx = ux; mvy = uy;
         e.spd = Math.min(d.spdMax, e.spd + 75 * dt); sp = e.spd;
@@ -531,7 +573,7 @@
         e.st -= dt;
         if (e.st <= 0) { const big = e.type === 'jefe'; e.st = big ? 2.4 : 3.2; const n = big ? 18 : 12, off = Math.random() * TAU; for (let i = 0; i < n; i++) shootEnemy(W, e.x, e.y, off + i / n * TAU, big ? 260 : 230, big ? e.pdmg : Math.ceil(e.dmg * .7)); }
         e.cd -= dt;
-        if (e.cd <= 0) { e.cd = e.type === 'jefe' ? 5 : 7; for (let i = 0; i < 4; i++) addMarker(W, e.type === 'jefe' ? 'perseguidor' : 'bebe', e.x + rand(-140, 140), e.y + rand(-140, 140)); }
+        if (e.cd <= 0) { e.cd = e.type === 'jefe' ? 5 : 7; for (let i = 0; i < 4; i++) addMarker(W, e.type === 'jefe' ? 'perseguidor' : worldOf(W.wave).filler, e.x + rand(-140, 140), e.y + rand(-140, 140)); }
       } else if (ai === 'bomb') {
         if (e.state === 'walk') { mvx = ux; mvy = uy; if (dist < e.r + p.r + 50) { e.state = 'fuse'; e.st = .7; } }
         else {
@@ -547,7 +589,7 @@
       } else if (ai === 'summon') {
         if (dist > 420) { mvx = ux; mvy = uy; } else if (dist < 340) { mvx = -ux; mvy = -uy; }
         e.cd -= dt;
-        if (e.cd <= 0 && dist < 650) { e.cd = rand(3.5, 4.5); for (let i = 0; i < 3; i++) addMarker(W, 'bebe', e.x + rand(-90, 90), e.y + rand(-90, 90), .7); }
+        if (e.cd <= 0 && dist < 650) { e.cd = rand(3.5, 4.5); for (let i = 0; i < 3; i++) addMarker(W, worldOf(W.wave).filler, e.x + rand(-90, 90), e.y + rand(-90, 90), .7); }
       } else if (ai === 'healer') {
         // keeps its distance and heals nearby enemies by 15% of their max HP every 2 s
         if (dist < 300) { mvx = -ux; mvy = -uy; } else if (dist > 420) { mvx = ux * .5; mvy = uy * .5; }
@@ -830,7 +872,7 @@
   }
 
   return {
-    TAU, ARENA, MAX_WAVES, MAX_PLAYERS, DANGERS, DEFAULT_DANGER, STAT_INFO, BASE_STATS, WEAPONS, WEAPON_LEN, WEAPON_TIER_MULT, ITEMS, ITEM_BY_ID, CHARS, EN, UPGRADES,
+    TAU, ARENA, MAX_WAVES, MAX_PLAYERS, DANGERS, DEFAULT_DANGER, STAT_INFO, BASE_STATS, WEAPONS, WEAPON_LEN, WEAPON_TIER_MULT, ITEMS, ITEM_BY_ID, CHARS, EN, WORLDS, worldOf, UPGRADES,
     createWorld, addPlayer, removePlayer, setChar, setDanger, setInput, startRun, step, act, snapshot,
     weaponPrice, xpNeed, maxHp, canTake, clamp, rand
   };
