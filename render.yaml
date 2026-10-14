@@ -1,8 +1,9 @@
 services:
   - type: web
-    name: camote-furioso
+    name: camote-furioso-eu
     runtime: node
     plan: free
+    region: frankfurt
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /health
