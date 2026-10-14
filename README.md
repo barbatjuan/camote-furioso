@@ -2,6 +2,8 @@
 
 Arena de supervivencia estilo Brotato, para 1 a 4 jugadores en cooperativo en línea.
 
+**Jugar:** https://camote-furioso-eu.onrender.com (servidor gratis en Render, Frankfurt; si estuvo inactivo tarda ~50 s en despertar).
+
 ## Jugar en local
 
 ```bash
