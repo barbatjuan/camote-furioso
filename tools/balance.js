@@ -45,8 +45,8 @@ function botShop(W, id) {
 }
 function run(danger) {
   const W = CF.createWorld(); W.danger = danger;
-  const chars = ['comun', 'bravo', 'tirador', 'granjero'];
-  for (let i = 0; i < PLAYERS; i++) CF.addPlayer(W, 'p' + i, 'Bot' + i, chars[(Math.random() * 4) | 0]);
+  const chars = Object.keys(CF.CHARS);
+  for (let i = 0; i < PLAYERS; i++) CF.addPlayer(W, 'p' + i, 'Bot' + i, chars[(Math.random() * chars.length) | 0]);
   CF.startRun(W);
   let maxEnemies = 0;
   for (let t = 0; t < 30 * 60 * 40 && !['over', 'win'].includes(W.phase); t++) {

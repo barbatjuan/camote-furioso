@@ -58,9 +58,15 @@
     lanza:      { name: 'Lanza', kind: 'melee', style: 'thrust', dmg: [12, 19, 30, 48], cd: [1.1, 1.05, .98, .9], range: 225, scale: { melee: 1 }, crit: .06, critMul: 2, knock: 25, price: 24, color: '#c9d2da' },
     bazuca:     { name: 'Bazuca', kind: 'ranged', dmg: [20, 32, 50, 80], cd: [2.4, 2.25, 2.1, 1.9], range: 420, scale: { ranged: 1 }, speed: 600, explode: [70, 80, 90, 110], crit: .03, critMul: 2, knock: 40, price: 40, color: '#ff5d3d', rocket: true },
     varita:     { name: 'Varita', kind: 'ranged', dmg: [8, 13, 20, 32], cd: [.9, .85, .78, .7], range: 380, scale: { ranged: .6 }, speed: 520, crit: .05, critMul: 2, knock: 8, price: 26, color: '#c77dff', homing: true },
+    bumeran:    { name: 'Bumerán', kind: 'ranged', dmg: [10, 16, 25, 40], cd: [1.3, 1.2, 1.1, .95], range: 320, scale: { ranged: .8 }, speed: 620, crit: .05, critMul: 2, knock: 15, price: 22, color: '#c8743a', boomerang: true },
+    martillo:   { name: 'Martillo', kind: 'melee', style: 'sweep', dmg: [25, 40, 60, 100], cd: [1.8, 1.7, 1.6, 1.45], range: 150, scale: { melee: 1.5 }, crit: .03, critMul: 2, knock: 85, price: 34, color: '#a8b8c8' },
+    arco:       { name: 'Arco', kind: 'ranged', dmg: [10, 17, 27, 45], cd: [1, .95, .88, .8], range: 500, scale: { ranged: 1 }, speed: 1000, pierce: [1, 1, 2, 2], crit: .15, critMul: 2.5, knock: 10, price: 20, color: '#e8d9b0', bolt: true },
+    latigo:     { name: 'Látigo', kind: 'melee', style: 'thrust', dmg: [4, 7, 11, 18], cd: [.75, .7, .65, .56], range: 240, scale: { melee: .6 }, crit: .1, critMul: 2, knock: 15, price: 18, color: '#8a5a34' },
+    revolver:   { name: 'Revólver', kind: 'ranged', dmg: [18, 28, 42, 70], cd: [.35, .33, .31, .28], clip: 6, reload: [2, 1.9, 1.8, 1.6], range: 380, scale: { ranged: 1 }, speed: 1100, crit: .05, critMul: 2, knock: 15, price: 28, color: '#ffd166' },
+    shuriken:   { name: 'Shuriken', kind: 'ranged', dmg: [6, 10, 15, 24], cd: [1, .95, .88, .8], range: 360, scale: { ranged: .6 }, speed: 800, bounce: [1, 2, 2, 3], crit: .2, critMul: 2, knock: 5, price: 24, color: '#dfe6ee', star: true },
   };
   // Sprite length in world units for each weapon (sprites are horizontal, pointing right).
-  const WEAPON_LEN = { pistola: 30, metralleta: 40, escopeta: 50, laser: 38, cuchillo: 36, palo: 46, ballesta: 46, lanzallamas: 46, espada: 54, lanza: 70, bazuca: 54, varita: 40 };
+  const WEAPON_LEN = { pistola: 30, metralleta: 40, escopeta: 50, laser: 38, cuchillo: 36, palo: 46, ballesta: 46, lanzallamas: 46, espada: 54, lanza: 70, bazuca: 54, varita: 40, bumeran: 30, martillo: 52, arco: 44, latigo: 64, revolver: 32, shuriken: 24 };
   const WEAPON_TIER_MULT = [1, 2, 3.6, 6.5];
 
   const ITEMS = [
@@ -101,7 +107,13 @@
     comun:    { name: 'Camote Común', desc: 'Sin trucos. Buen punto de partida.', weapon: 'pistola', fx: {}, skin: '#b4533f', acc: 'none' },
     bravo:    { name: 'Camote Bravo', desc: 'Pega de cerca y se mueve rápido.', weapon: 'cuchillo', fx: { melee: 3, speed: 6, ranged: -3 }, skin: '#c4402c', acc: 'band' },
     tirador:  { name: 'Camote Tirador', desc: 'Dispara de lejos, pero es frágil.', weapon: 'pistola', fx: { ranged: 3, range: 60, maxHp: -3 }, skin: '#8f4a6a', acc: 'goggles' },
-    granjero: { name: 'Camote Granjero', desc: 'Cosecha más materiales cada oleada.', weapon: 'palo', fx: { harvest: 15, luck: 10, dmg: -10 }, skin: '#c27b3e', acc: 'hat' },
+    granjero: { name: 'Camote Granjero', desc: 'Cosecha más materiales cada oleada.', weapon: 'palo', fx: { harvest: 6, luck: 5, dmg: -15 }, skin: '#c27b3e', acc: 'hat' },
+    robusto:  { name: 'Camote Robusto', desc: 'Gana 2 de vida máxima por nivel, pero es lento.', weapon: 'martillo', fx: { maxHp: 10, armor: 2, speed: -5, atkSpd: -5 }, perLevel: { maxHp: 1 }, skin: '#a8603a', acc: 'none' },
+    veloz:    { name: 'Camote Veloz', desc: 'Corre y esquiva como nadie, aguanta poco.', weapon: 'latigo', fx: { speed: 20, dodge: 10, maxHp: -2 }, skin: '#d0703d', acc: 'band' },
+    mago:     { name: 'Camote Mago', desc: 'Domina la varita. Malo de cerca.', weapon: 'varita', fx: { ranged: 3, dmg: 10, range: 40, melee: -4, armor: -2 }, skin: '#9a5a7a', acc: 'none' },
+    vampiro:  { name: 'Camote Vampiro', desc: 'Se cura con cada golpe. No regenera vida.', weapon: 'espada', fx: { lifesteal: 6, crit: 3, regen: -6, maxHp: -2 }, skin: '#8a6a9a', acc: 'none' },
+    suertudo: { name: 'Camote Suertudo', desc: 'Más cajas, frutas y rarezas en la tienda.', weapon: 'shuriken', fx: { luck: 15, dmg: -20, maxHp: -2 }, skin: '#c99a3e', acc: 'none' },
+    piromano: { name: 'Camote Pirómano', desc: 'Todo arde. Alcance corto.', weapon: 'lanzallamas', fx: { dmg: 5, range: -40 }, skin: '#d4552a', acc: 'none' },
   };
 
   // from: first wave it spawns in the normal pool; w: pool weight. spd is px/s (Brotato speed × 2/3).
@@ -347,6 +359,7 @@
     while (p.xp >= xpNeed(p.level)) {
       p.xp -= xpNeed(p.level); p.level++; p.pendingLevels++;
       p.stats.maxHp += 1; if (!p.dead) p.hp += 1;
+      const pl = CHARS[p.char].perLevel; if (pl) for (const k in pl) { p.stats[k] += pl[k]; if (k === 'maxHp' && !p.dead) p.hp += pl[k]; }
       txt(W, p.x, p.y - 50, '¡Nivel ' + p.level + '!', '#6fd0ff', 22);
     }
   }
@@ -411,9 +424,19 @@
           const na = cur + clamp(da, -6 * dt, 6 * dt); b.vx = Math.cos(na) * sp; b.vy = Math.sin(na) * sp;
         }
       }
-      b.x += b.vx * dt; b.y += b.vy * dt; b.d += Math.hypot(b.vx, b.vy) * dt;
-      if (b.d > b.maxD) { b.dead = true; if (b.explode) blast(W, b); continue; }
       const owner = W.players[b.owner];
+      if (b.boomerang) {
+        b.life -= dt;
+        if (!b.ret && b.d > b.maxD * .55) { b.ret = true; b.hit = []; }
+        if (b.ret) {
+          if (!owner || owner.dead || b.life <= 0) { b.dead = true; continue; }
+          const dx = owner.x - b.x, dy = owner.y - b.y, dl = Math.hypot(dx, dy) || 1, sp = Math.hypot(b.vx, b.vy);
+          b.vx += (dx / dl * sp - b.vx) * Math.min(1, dt * 8); b.vy += (dy / dl * sp - b.vy) * Math.min(1, dt * 8);
+          if (dl < 24) { b.dead = true; continue; }
+        }
+      }
+      b.x += b.vx * dt; b.y += b.vy * dt; b.d += Math.hypot(b.vx, b.vy) * dt;
+      if (!b.boomerang && b.d > b.maxD) { b.dead = true; if (b.explode) blast(W, b); continue; }
       for (const e of W.enemies) {
         if (e.dead || b.hit.includes(e.id)) continue;
         const rr = e.r + b.r;
@@ -422,6 +445,12 @@
           b.hit.push(e.id);
           const l = Math.hypot(b.vx, b.vy);
           dealDamage(W, e, b.dmg, b.cc, b.cm, b.knock, b.vx / l, b.vy / l, owner, true);
+          if (b.boomerang) continue;                          // boomerangs cut through everything
+          if (b.bounce > 0) {                                 // shuriken: ricochet to the nearest enemy not yet hit
+            let nx = null, nd = 260 * 260;
+            for (const o of W.enemies) { if (o.dead || b.hit.includes(o.id) || EN[o.type].neutral) continue; const dd = (o.x - b.x) ** 2 + (o.y - b.y) ** 2; if (dd < nd) { nd = dd; nx = o; } }
+            if (nx) { b.bounce--; const a = Math.atan2(nx.y - b.y, nx.x - b.x); b.vx = Math.cos(a) * l; b.vy = Math.sin(a) * l; b.d = 0; b.maxD = 300; break; }
+          }
           if (--b.pierce < 0) { b.dead = true; break; }
         }
       }
@@ -597,7 +626,11 @@
       best = best || tree;
       w.cd -= dt; if (w.anim > 0) w.anim -= dt;
       if (best) w.angle = Math.atan2(best.y - w.y, best.x - w.x);
-      if (best && w.cd <= 0) { fireWeapon(W, p, w, d, best, range); w.cd = weaponCooldown(p, w); }
+      if (best && w.cd <= 0) {
+        fireWeapon(W, p, w, d, best, range);
+        w.cd = weaponCooldown(p, w);
+        if (w.reloadT) { w.cd = w.reloadT / Math.max(.25, 1 + st(p, 'atkSpd') / 100); w.reloadT = 0; }
+      }
     });
   }
   function fireWeapon(W, p, w, d, t, range) {
@@ -611,11 +644,13 @@
         W.projs.push({
           owner: p.id, x: w.x + Math.cos(a) * 16, y: w.y + Math.sin(a) * 16, vx: Math.cos(a) * d.speed, vy: Math.sin(a) * d.speed,
           dmg, cc, cm: d.critMul, knock: d.knock, pierce: d.pierce ? d.pierce[w.tier - 1] : 0, maxD: range + 40, d: 0, hit: [],
-          kind: d.beam ? 'beam' : d.flame ? 'flame' : d.rocket ? 'rocket' : d.bolt ? 'bolt' : d.homing ? 'orb' : 'bullet',
-          color: d.color, explode: d.explode ? d.explode[w.tier - 1] : 0, homing: !!d.homing, r: d.beam ? 7 : d.flame ? 10 : d.rocket ? 8 : 5
+          kind: d.beam ? 'beam' : d.flame ? 'flame' : d.rocket ? 'rocket' : d.bolt ? 'bolt' : d.homing ? 'orb' : d.boomerang ? 'boom' : d.star ? 'star' : 'bullet',
+          color: d.color, explode: d.explode ? d.explode[w.tier - 1] : 0, homing: !!d.homing, r: d.beam ? 7 : d.flame ? 10 : d.rocket ? 8 : d.boomerang || d.star ? 10 : 5,
+          boomerang: !!d.boomerang, ret: false, life: 3, bounce: d.bounce ? d.bounce[w.tier - 1] : 0
         });
       }
       w.anim = .08; w.animDur = .08;
+      if (d.clip) { w.ammo = (w.ammo ?? d.clip) - 1; if (w.ammo <= 0) { w.ammo = d.clip; w.reloadT = d.reload[w.tier - 1]; } }
     } else {
       w.atkAngle = ang; w.anim = .22; w.animDur = .22;
       const dx = Math.cos(ang), dy = Math.sin(ang);

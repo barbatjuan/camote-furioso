@@ -14,6 +14,8 @@ from pathlib import Path
 from PIL import Image
 
 MAX_SIDE = {"p_": 256, "e_": 256, "w_": 192, "d_": 96}
+# Sprites with white areas enclosed by the drawing (not reachable from the border); every near-white pixel is keyed out.
+KEY_ALL_WHITE = {"w_arco"}
 
 
 def has_alpha_bg(im):
@@ -71,6 +73,8 @@ def main(manifest, raw_dir, out_dir):
             urllib.request.urlretrieve(url, raw)
         im = Image.open(raw)
         im = im.convert("RGBA") if has_alpha_bg(im) else remove_white(im.convert("RGB"))
+        if name in KEY_ALL_WHITE:
+            im.putdata([(r, g, b, 0) if min(r, g, b) > 228 else (r, g, b, a) for r, g, b, a in im.getdata()])
         a = im.getchannel("A").point(lambda v: 255 if v > 24 else 0)
         bbox = a.getbbox()
         if bbox:

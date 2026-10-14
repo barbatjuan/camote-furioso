@@ -628,6 +628,10 @@ function render(dt) {
       ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(ang);
       ctx.strokeStyle = '#7a5a34'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-16, 0); ctx.lineTo(6, 0); ctx.stroke();
       ctx.fillStyle = '#dfe6ee'; ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(3, -4); ctx.lineTo(3, 4); ctx.closePath(); ctx.fill(); ctx.restore();
+    } else if (b0.kind === 'boom' || b0.kind === 'star') {
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(now / (b0.kind === 'star' ? 40 : 60));
+      if (!drawSprite(ctx, b0.kind === 'star' ? 'w_shuriken' : 'w_bumeran', 0, 0, b0.kind === 'star' ? 20 : 26)) { ctx.fillStyle = b0.color; ctx.fillRect(-8, -8, 16, 16); }
+      ctx.restore();
     } else if (b0.kind === 'orb') {
       ctx.globalAlpha = .35; ctx.fillStyle = b0.color; ctx.beginPath(); ctx.arc(b.x, b.y, 11, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
       ctx.fillStyle = '#f3e1ff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, TAU); ctx.fill();
@@ -684,7 +688,12 @@ function weaponLines(id, tier) {
   const sc = Object.entries(d.scale).map(([k, v]) => `${Math.round(v * 100)}% ${k === 'melee' ? 'cuerpo a cuerpo' : 'a distancia'}`).join(', ');
   const pel = d.pellets ? ` × ${d.pellets[tier - 1]}` : '';
   const pierce = d.pierce && d.pierce[tier - 1] && !d.flame ? `<span>Atraviesa ${d.pierce[tier - 1]} enemigo${d.pierce[tier - 1] > 1 ? 's' : ''}</span>` : '';
-  const extra = d.explode ? `<span>Explota en área (radio ${d.explode[tier - 1]})</span>` : d.homing ? '<span>Persigue al enemigo</span>' : d.flame ? '<span>Llamas que atraviesan</span>' : '';
+  const extra = d.explode ? `<span>Explota en área (radio ${d.explode[tier - 1]})</span>`
+    : d.homing ? '<span>Persigue al enemigo</span>'
+    : d.flame ? '<span>Llamas que atraviesan</span>'
+    : d.boomerang ? '<span>Atraviesa todo y vuelve a tus manos</span>'
+    : d.bounce ? `<span>Rebota a ${d.bounce[tier - 1]} enemigos más</span>`
+    : d.clip ? `<span>Cargador de ${d.clip} · recarga ${d.reload[tier - 1]}s</span>` : '';
   return [`<span>Daño <b>${d.dmg[tier - 1]}${pel}</b> <small>(+${sc})</small></span>`, `<span>Cada <b>${d.cd[tier - 1]}s</b> · alcance ${d.range}</span>`, `<span>Crítico ${Math.round(d.crit * 100)}% ×${d.critMul}</span>`, pierce, extra].filter(Boolean);
 }
 function bestWave() { return +load('camote-best') || 0; }
