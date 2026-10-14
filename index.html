@@ -53,6 +53,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--yam);outline-of
 #bossbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(520px,calc(100vw - 32px));pointer-events:none}
 #bossbar b{display:block;text-align:center;font:16px var(--display);letter-spacing:.1em;margin-bottom:4px;text-shadow:0 2px 0 #000}
 #bossbar .bar{height:16px}
+#callout{position:fixed;left:50%;top:28%;transform:translateX(-50%);font:clamp(28px,6vw,52px)/1 var(--display);color:var(--yam);text-shadow:0 4px 0 #6e2a17,0 0 20px #000;pointer-events:none;text-align:center;width:calc(100vw - 32px)}
 #banner{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));background:#000b;border:2px solid var(--yam);border-radius:12px;padding:10px 16px;font-weight:800;text-align:center;pointer-events:none;max-width:calc(100vw - 32px)}
 
 /* Overlay screens */
@@ -86,6 +87,13 @@ kbd{font:12px var(--body);font-weight:800;background:var(--panel);border:1px sol
 .field input.code{font:24px var(--display);letter-spacing:.3em;text-transform:uppercase}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}
 .row > .field{flex:1;min-width:120px}
+.dangers{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.dg{font:20px var(--display);padding:6px 0;border-radius:8px;background:#0006;border:2px solid #000;color:var(--ink)}
+.dg.sel{background:var(--hp);color:#fff}
+.dg:disabled{opacity:.55;cursor:default}
+.dgdesc{font-size:13px;color:var(--muted)}
+.dgdesc b{color:var(--ink)}
+.lobby .field{width:min(420px,100%);text-align:left}
 .err{background:#ef4a5f22;border:2px solid #ef4a5f88;border-radius:10px;padding:8px 12px;font-size:14px;width:100%;box-sizing:border-box}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
@@ -173,12 +181,13 @@ kbd{font:12px var(--body);font-weight:800;background:var(--panel);border:1px sol
 </div>
 <div id="bossbar" hidden><b id="bossName"></b><div class="bar hp"><i id="bossFill"></i></div></div>
 <div id="banner" hidden></div>
+<div id="callout" hidden></div>
 <div id="overlay"></div>
 
 <script src="shared/game.js"></script>
 <script>
 'use strict';
-const { TAU, ARENA, MAX_WAVES, MAX_PLAYERS, STAT_INFO, WEAPONS, WEAPON_LEN, ITEMS, ITEM_BY_ID, CHARS, EN, clamp, rand } = CF;
+const { TAU, ARENA, MAX_WAVES, MAX_PLAYERS, DANGERS, DEFAULT_DANGER, STAT_INFO, WEAPONS, WEAPON_LEN, ITEMS, ITEM_BY_ID, CHARS, EN, clamp, rand } = CF;
 const ROMAN = ['I', 'II', 'III', 'IV'];
 const TIER_COL = ['#cfc6d8', '#58a8ff', '#b977ff', '#ff5d5d'];
 const STAT_GLYPH = { maxHp: ['♥', '#ef4a5f'], regen: ['✚', '#7be08f'], lifesteal: ['◗', '#d9435c'], dmg: ['✦', '#ff8a3d'], melee: ['✊', '#ffb36b'], ranged: ['➶', '#ffd166'], atkSpd: ['»', '#ffe08a'], crit: ['✶', '#ffef7a'], range: ['◎', '#6fd0ff'], armor: ['⛉', '#a8b8c8'], dodge: ['≈', '#9fe8ff'], speed: ['➤', '#8fe36b'], luck: ['♣', '#5fd67a'], harvest: ['❦', '#9ad85a'], pickup: ['◉', '#e07aff'] };
@@ -200,6 +209,7 @@ let uiKey = '';
 let menuErr = '';
 let selChar = CHARS[load('camote-char')] ? load('camote-char') : 'comun';
 let myName = load('camote-name') || '';
+let selDanger = DANGERS[+load('camote-danger')] && load('camote-danger') !== null ? +load('camote-danger') : DEFAULT_DANGER;
 const pred = { x: ARENA.w / 2, y: ARENA.h / 2 };   // predicted own position (online)
 const smooth = new Map();                          // render positions for remote entities
 let FX = [], TX = [], shake = 0;
@@ -291,11 +301,11 @@ const groundPat = (() => {
 /* ---------- Snapshot handling ---------- */
 function unpack(raw) {
   return {
-    phase: raw.ph, wave: raw.w, waveTime: raw.wt, kills: raw.k, at: performance.now(),
-    enemies: raw.e.map(a => ({ id: a[0], type: a[1], x: a[2], y: a[3], hp: a[4], mh: a[5], warn: a[6], flash: a[7] })),
+    phase: raw.ph, wave: raw.w, waveTime: raw.wt, kills: raw.k, danger: raw.dg, horde: raw.hd, at: performance.now(),
+    enemies: raw.e.map(a => ({ id: a[0], type: a[1], x: a[2], y: a[3], hp: a[4], mh: a[5], warn: a[6], flash: a[7], buffed: a[8] })),
     projs: raw.b.map(a => ({ x: a[0], y: a[1], vx: a[2], vy: a[3], kind: a[4], color: a[5], k: a[6] })),
     eprojs: raw.q.map(a => ({ x: a[0], y: a[1], vx: a[2], vy: a[3] })),
-    drops: raw.d.map(a => ({ type: a[0], x: a[1], y: a[2] })),
+    drops: raw.d.map(a => ({ type: a[0], x: a[1], y: a[2], v: a[3] })),
     markers: raw.m.map(a => ({ type: a[0], x: a[1], y: a[2], k: a[3] })),
     players: raw.p.map(p => ({ ...p, wp: p.wp.map(a => ({ id: a[0], tier: a[1], ox: a[2], oy: a[3], angle: a[4], anim: a[5], animDur: a[6], atkAngle: a[7] })) }))
   };
@@ -344,10 +354,13 @@ function applyEvents(evs) {
   for (const e of evs) {
     if (e.t === 'txt') { if (TX.length > 90) TX.shift(); TX.push({ x: e.x + rand(-8, 8), y: e.y, txt: e.s, color: e.c, size: e.z, life: .8, max: .8 }); }
     else if (e.t === 'burst') burst(e.x, e.y, e.c, e.n, e.sp);
-    else if (e.t === 'ring') { FX.push({ ring: true, x: e.x, y: e.y, r: e.r, life: .35, max: .35, color: e.c }); burst(e.x, e.y, e.c, 16, e.r * 4); shake = Math.max(shake, 5); }
+    else if (e.t === 'ring') { FX.push({ ring: true, x: e.x, y: e.y, r: e.r, life: e.soft ? .5 : .35, max: e.soft ? .5 : .35, color: e.c, soft: e.soft }); if (!e.soft) { burst(e.x, e.y, e.c, 16, e.r * 4); shake = Math.max(shake, 5); } }
+    else if (e.t === 'banner') callout(e.s);
     else if (e.t === 'shake') { if (!e.pid || e.pid === meId) shake = Math.max(shake, e.v); }
   }
 }
+let calloutT = 0;
+function callout(s) { const el = $('callout'); el.textContent = s; el.hidden = false; clearTimeout(calloutT); calloutT = setTimeout(() => { el.hidden = true; }, 2600); }
 function burst(x, y, color, n = 8, sp = 220) { for (let i = 0; i < n && FX.length < 600; i++) { const a = Math.random() * TAU, s = rand(.3, 1) * sp; FX.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(.25, .5), max: .5, color, size: rand(2, 5) }); } }
 function updateFx(dt) {
   for (const f of FX) { if (!f.ring) { f.x += f.vx * dt; f.y += f.vy * dt; f.vx *= .9; f.vy *= .9; } f.life -= dt; }
@@ -402,7 +415,7 @@ setInterval(() => {
 function startSolo() {
   saveName();
   mode = 'solo'; meId = 'me'; paused = false;
-  W = CF.createWorld(); CF.addPlayer(W, 'me', myName || 'Camote', selChar); CF.startRun(W); W.events = [];
+  W = CF.createWorld(); W.danger = selDanger; CF.addPlayer(W, 'me', myName || 'Camote', selChar); CF.startRun(W); applyEvents(W.events); W.events = [];
   S = null; setSnapshot(unpack(CF.snapshot(W, 'me')));
 }
 function leaveToMenu(msg) {
@@ -460,7 +473,7 @@ function updateHud() {
   $('xpFill').style.transform = `scaleX(${me.xp / me.xn})`;
   $('xpTxt').textContent = `NIVEL ${me.lv}`;
   $('matsTxt').textContent = me.mats;
-  $('waveLbl').textContent = `OLEADA ${S.wave} / ${MAX_WAVES}`;
+  $('waveLbl').textContent = `OLEADA ${S.wave} / ${MAX_WAVES} · PELIGRO ${S.danger}${S.horde ? ' · HORDA' : ''}`;
   const t = Math.max(0, Math.ceil(S.waveTime));
   $('timer').textContent = t; $('timer').classList.toggle('low', t <= 5);
   const boss = S.enemies.find(e => EN[e.type].boss);
@@ -532,11 +545,13 @@ function drawPlayer(p, x, y, isMe) {
 }
 function drawEnemy(e, x, y, t, focus) {
   const d = EN[e.type], r = d.r, sname = 'e_' + e.type;
-  const wob = Math.sin(t * 8 + e.id) * .06, h = r * 2.6;
+  const tree = d.ai === 'tree';
+  const wob = tree ? Math.sin(t * 1.5 + e.id) * .02 : Math.sin(t * 8 + e.id) * .06, h = r * (tree ? 3 : 2.6);
   ctx.save(); ctx.translate(x, y);
   ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(0, r * .95, r * .9, r * .3, 0, 0, TAU); ctx.fill();
+  if (e.buffed) { ctx.fillStyle = 'rgba(255,60,80,.35)'; ctx.strokeStyle = '#ff4d5e'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, r * 1.35, 0, TAU); ctx.fill(); ctx.stroke(); }
   if (e.warn) ctx.translate(rand(-2, 2), rand(-2, 2));
-  if (focus && focus.x < x) ctx.scale(-1, 1);
+  if (!tree && focus && focus.x < x) ctx.scale(-1, 1);
   ctx.scale(1 + wob, 1 - wob);
   if (drawSprite(ctx, sname, 0, -r * .15, h)) {
     const blink = e.flash ? .85 : e.warn && Math.floor(t * 16) % 2 === 0 ? .55 : 0;
@@ -546,7 +561,9 @@ function drawEnemy(e, x, y, t, focus) {
 }
 function drawDrop(d) {
   const sname = d.type === 'mat' ? 'd_gema' : d.type === 'fruit' ? 'd_fruta' : 'd_caja';
-  if (!drawSprite(ctx, sname, d.x, d.y, d.type === 'mat' ? 16 : d.type === 'fruit' ? 22 : 28)) {
+  if (d.type === 'legend') { ctx.fillStyle = 'rgba(255,93,93,.4)'; ctx.beginPath(); ctx.arc(d.x, d.y, 26 + Math.sin(performance.now() / 150) * 4, 0, TAU); ctx.fill(); }
+  const size = d.type === 'mat' ? 16 + Math.min(10, (d.v - 1) * 2) : d.type === 'fruit' ? 22 : d.type === 'legend' ? 34 : 28;
+  if (!drawSprite(ctx, sname, d.x, d.y, size)) {
     ctx.fillStyle = d.type === 'mat' ? '#8fe36b' : d.type === 'fruit' ? '#ef4a5f' : '#b07a45'; ctx.fillRect(d.x - 5, d.y - 5, 10, 10);
   }
 }
@@ -623,7 +640,7 @@ function render(dt) {
   }
   for (const f of FX) {
     const kk = f.life / f.max; ctx.globalAlpha = kk;
-    if (f.ring) { ctx.fillStyle = f.color; ctx.globalAlpha = .25 * kk; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1.1 - kk * .4), 0, TAU); ctx.fill(); ctx.globalAlpha = kk; ctx.strokeStyle = '#ffe08a'; ctx.lineWidth = 4; ctx.stroke(); }
+    if (f.ring) { ctx.fillStyle = f.color; ctx.globalAlpha = (f.soft ? .05 : .25) * kk; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1.1 - kk * .4), 0, TAU); ctx.fill(); ctx.globalAlpha = f.soft ? kk * .5 : kk; ctx.strokeStyle = f.soft ? f.color : '#ffe08a'; ctx.lineWidth = f.soft ? 2 : 4; ctx.stroke(); }
     else { ctx.fillStyle = f.color; ctx.fillRect(f.x - f.size / 2, f.y - f.size / 2, f.size, f.size); }
   }
   ctx.globalAlpha = 1;
@@ -673,6 +690,11 @@ function weaponLines(id, tier) {
 function bestWave() { return +load('camote-best') || 0; }
 
 /* ---------- Screens ---------- */
+function dangerPicker(cur, act, disabled) {
+  return `<div class="field">Dificultad
+    <div class="dangers" role="group" aria-label="Dificultad">${DANGERS.map((d, i) => `<button class="dg${i === cur ? ' sel' : ''}" data-act="${act}" data-arg="${i}" ${disabled ? 'disabled' : ''} aria-pressed="${i === cur}" title="${d.desc}">${i}</button>`).join('')}</div>
+    <span class="dgdesc"><b>${DANGERS[cur].name}:</b> ${DANGERS[cur].desc}</span></div>`;
+}
 function showMenuError(msg) { if (screen === 'menu') renderMenu(msg); else menuErr = msg; }
 function renderMenu(err) {
   screen = 'menu'; showHud(false); uiKey = '';
@@ -695,7 +717,8 @@ function renderMenu(err) {
       <section>
         <h3>Tu nombre</h3>
         <label class="field">Así te verán tus compañeros<input id="nameIn" maxlength="16" placeholder="Camote" value="${esc(myName)}" autocomplete="off"></label>
-        <button class="btn go" data-act="solo">Jugar solo</button>
+        ${dangerPicker(selDanger, 'seldanger')}
+        <button class="btn go" data-act="solo">Jugar solo · Peligro ${selDanger}</button>
       </section>
       <section>
         <h3>Cooperativo en línea</h3>
@@ -725,6 +748,7 @@ function showLobby() {
     <p class="lede">Comparte este código o el enlace con tus amigos (máximo ${MAX_PLAYERS} jugadores).</p>
     <div class="row-c"><button class="btn" data-act="copy">Copiar enlace</button><code id="linkTxt" style="align-self:center;font-size:13px;color:var(--muted)">${esc(link)}</code></div>
     <div class="plist">${L.players.map(p => `<div class="pcard${p.id === meId ? ' me' : ''}"><img src="${portrait(p.char)}" alt=""><b>${esc(p.name)}</b><small>${CHARS[p.char].name}${p.id === L.host ? ' · anfitrión' : ''}</small></div>`).join('')}</div>
+    ${dangerPicker(L.danger ?? DEFAULT_DANGER, 'lobbydanger', !isHost)}
     <h3>Cambia tu camote</h3>
     <div class="minichars">${Object.keys(CHARS).map(id => `<button class="${meP && meP.char === id ? 'sel' : ''}" data-act="lobbychar" data-arg="${id}" title="${CHARS[id].name}" aria-label="${CHARS[id].name}"><img src="${portrait(id)}" alt=""></button>`).join('')}</div>
     <div class="row-c">
@@ -824,7 +848,7 @@ function renderEnd() {
     <div class="big">${won ? (team ? '¡Sobrevivieron!' : '¡Sobreviviste!') : (team ? 'Los hicieron puré' : 'Te hicieron puré')}</div>
     <p class="lede">${won ? 'La Reina Babosa cayó y el campo vuelve a ser de los tubérculos.' : `${team ? 'El equipo cayó' : 'Caíste'} en la oleada ${S.wave}. Las babosas celebran con salsa.`}</p>
     <div class="summary">
-      <div><b>${S.wave}</b><span>Oleada</span></div><div><b>${S.kills}</b><span>Eliminadas</span></div>
+      <div><b>${S.wave}</b><span>Oleada</span></div><div><b>${S.danger}</b><span>Peligro</span></div><div><b>${S.kills}</b><span>Eliminadas</span></div>
       ${me ? `<div><b>${me.lv}</b><span>Tu nivel</span></div><div><b>${me.nw}</b><span>Tus armas</span></div>` : ''}
     </div>
     ${team ? `<div class="plist">${S.players.map(p => `<div class="pcard${p.id === meId ? ' me' : ''}"><img src="${portrait(p.c)}" alt=""><b>${esc(p.n)}</b><small>${p.kills} eliminadas · nivel ${p.lv}</small></div>`).join('')}</div>` : ''}
@@ -854,10 +878,12 @@ const ACTIONS = {
     const sel = () => { const r = document.createRange(); r.selectNodeContents($('linkTxt')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
     try { navigator.clipboard.writeText(link).then(() => { const b = overlay.querySelector('[data-act="copy"]'); if (b) b.textContent = 'Enlace copiado'; }, sel); } catch (e) { sel(); }
   },
+  seldanger: d => { saveName(); selDanger = +d; save('camote-danger', String(selDanger)); renderMenu(); },
+  lobbydanger: d => send({ t: 'danger', d: +d }),
   lobbychar: id => { selChar = id; save('camote-char', id); send({ t: 'char', char: id }); },
   start: () => send({ t: 'start' }),
   tolobby: () => send({ t: 'lobby' }),
-  again: () => { CF.startRun(W); W.events = []; screen = 'menu'; setSnapshot(unpack(CF.snapshot(W, 'me'))); },
+  again: () => { CF.startRun(W); applyEvents(W.events); W.events = []; screen = 'menu'; setSnapshot(unpack(CF.snapshot(W, 'me'))); },
   menu: () => leaveToMenu(),
   resume: () => closePause(),
   lvpick: i => act('lvpick', +i), buy: i => act('buy', +i), lock: i => act('lock', +i), sell: i => act('sell', +i), combine: i => act('combine', +i),

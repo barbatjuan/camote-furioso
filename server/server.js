@@ -43,7 +43,7 @@ function createRoom() {
 function lobbyInfo(room) {
   const W = room.world;
   return {
-    t: 'lobby', code: room.code, host: room.host, phase: W.phase,
+    t: 'lobby', code: room.code, host: room.host, phase: W.phase, danger: W.danger,
     players: W.order.map(id => ({ id, name: W.players[id].name, char: W.players[id].char }))
   };
 }
@@ -102,6 +102,9 @@ wss.on('connection', ws => {
       }
       case 'char':
         if (room) { CF.setChar(room.world, ws.pid, m.char); broadcast(room, lobbyInfo(room)); }
+        break;
+      case 'danger':
+        if (room && room.host === ws.pid) { CF.setDanger(room.world, m.d); broadcast(room, lobbyInfo(room)); }
         break;
       case 'start':
         if (room && room.host === ws.pid && ['lobby', 'over', 'win'].includes(room.world.phase)) {
