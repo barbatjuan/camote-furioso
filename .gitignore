@@ -1,3 +1,5 @@
 node_modules/
 raw/
 tools/manifest.json
+dist/
+.wrangler/

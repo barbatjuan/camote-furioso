@@ -378,7 +378,7 @@ function updateFx(dt) {
 }
 
 /* ---------- Networking ---------- */
-function wsUrl() { return (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host; }
+function wsUrl() { return (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws'; }
 function onlinePossible() { return /^https?:$/.test(location.protocol); }
 function connect(first) {
   if (net) { try { net.ws.close(); } catch (e) { } }
@@ -412,6 +412,10 @@ function onNet(m) {
 }
 setInterval(() => {
   if (mode !== 'online' || !S || S.phase !== 'wave' || !net) return;
+  // standing still: send the stop once, then stay quiet (the free Cloudflare plan counts messages)
+  const still = !inp.mx && !inp.my;
+  if (still && net.still) return;
+  net.still = still;
   net.seq++;
   send({ t: 'input', mx: +inp.mx.toFixed(3), my: +inp.my.toFixed(3), seq: net.seq });
   net.hist.push({ seq: net.seq, x: pred.x, y: pred.y });

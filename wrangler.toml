@@ -1,0 +1,19 @@
+name = "camote-furioso"
+main = "worker/index.js"
+compatibility_date = "2025-09-01"
+
+[build]
+command = "node tools/build-cf.js"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[[durable_objects.bindings]]
+name = "LOBBY"
+class_name = "Lobby"
+
+# SQLite-backed Durable Objects are the ones included in the Workers free plan
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Lobby"]
